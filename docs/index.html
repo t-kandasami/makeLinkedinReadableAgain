@@ -48,7 +48,11 @@
       <ul id="changelog-list">
         <li>
           <span class="date">2026-05-02</span>
-          <span class="entry">Backend: added <code>PrivateNetworkAccessMiddleware</code> setting <code>Access-Control-Allow-Private-Network: true</code> on preflight responses. Without it, Chrome silently blocks userscript fetches from linkedin.com (public origin) to localhost (private network), surfacing as <code>TypeError: Failed to fetch</code>.</span>
+          <span class="entry">Userscript v0.1.4: replaced page-context <code>fetch()</code> with Tampermonkey's <code>GM_xmlhttpRequest</code>. linkedin.com's <code>connect-src</code> CSP blocks any page-script connection to localhost; <code>GM_xmlhttpRequest</code> runs in the extension's privileged process and bypasses page CSP. Added <code>@connect localhost</code> and <code>@grant GM_xmlhttpRequest</code> to the userscript header.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
+          <span class="entry">Backend: added <code>PrivateNetworkAccessMiddleware</code> setting <code>Access-Control-Allow-Private-Network: true</code> on preflight responses. Mostly defensive &mdash; the userscript path uses <code>GM_xmlhttpRequest</code> which doesn't trigger PNA, but the GitHub-Pages live demo path needs it.</span>
         </li>
         <li>
           <span class="date">2026-05-02</span>
