@@ -3,6 +3,9 @@
 // Exposes window.renderMemeCard(rootEl, data) and window.renderError(rootEl, msg).
 
 (function (global) {
+  var TAG = '[render.js]';
+  console.log(TAG, 'loaded');
+
   function el(tag, attrs, ...children) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -95,6 +98,7 @@
   }
 
   function renderMemeCard(root, data) {
+    console.log(TAG, 'renderMemeCard called', { rootTag: root && root.tagName, data });
     root.innerHTML = '';
     const card = el('div', { class: 'meme-card' },
       el('div', { class: 'meme-col left' },

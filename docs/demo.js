@@ -5,6 +5,8 @@
 
 (function () {
   const BACKEND = 'http://localhost:8000';
+  const TAG = '[demo.js]';
+  console.log(TAG, 'loaded, backend =', BACKEND);
 
   const form = document.getElementById('demo-form');
   const input = document.getElementById('demo-input');
@@ -24,11 +26,14 @@
     const post = input.value.trim();
     if (!post) return;
 
+    console.group(TAG, 'translate clicked');
+    console.log('post text length:', post.length);
     submit.disabled = true;
     submit.textContent = 'Translating...';
     output.innerHTML = '<p class="demo-loading">Asking the AI to be brutally honest...</p>';
 
     try {
+      console.log('fetching', `${BACKEND}/translate`, 'and', `${BACKEND}/highlights`);
       const [translateResp, highlightsResp] = await Promise.all([
         fetch(`${BACKEND}/translate`, {
           method: 'POST',
@@ -41,22 +46,29 @@
           body: JSON.stringify({ post_text: post }),
         }),
       ]);
+      console.log('/translate status:', translateResp.status);
+      console.log('/highlights status:', highlightsResp.status);
 
       if (!translateResp.ok) {
         const err = await translateResp.text();
         throw new Error(`translate ${translateResp.status}: ${err}`);
       }
       const translation = await translateResp.json();
+      console.log('translation:', translation);
       const highlights = highlightsResp.ok
         ? (await highlightsResp.json()).highlights
         : [];
+      console.log('highlights count:', highlights.length);
 
       window.renderMemeCard(output, { original: post, translation, highlights });
+      console.log('render complete');
     } catch (err) {
+      console.error(TAG, 'error:', err);
       window.renderError(output, friendlyError(err));
     } finally {
       submit.disabled = false;
       submit.textContent = 'Translate';
+      console.groupEnd();
     }
   });
 })();
