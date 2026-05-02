@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from openai import AsyncOpenAI
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from prompts import (
     HIGHLIGHTER_SYSTEM_PROMPT,
@@ -46,6 +47,25 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+class PrivateNetworkAccessMiddleware(BaseHTTPMiddleware):
+    """Chrome's Private Network Access (CORS-RFC1918): a public-origin page
+    fetching a private/local address must receive
+    `Access-Control-Allow-Private-Network: true` on the preflight response,
+    or the browser silently blocks the request. FastAPI's CORSMiddleware
+    doesn't set this header, so the userscript on linkedin.com → localhost
+    fails with `TypeError: Failed to fetch` until we add it ourselves.
+    """
+
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        if request.headers.get("access-control-request-private-network", "").lower() == "true":
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
+
+
+app.add_middleware(PrivateNetworkAccessMiddleware)
 
 
 async def call_openai_json(system_prompt: str, user_prompt: str) -> dict:
