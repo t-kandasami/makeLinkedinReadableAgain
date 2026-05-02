@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐔 Chicken</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body class="chicken-page">
+  <div class="egg-bg" aria-hidden="true">
+    <span class="egg" style="left: 6%;  top: 18%; animation-delay: 0s;">🥚</span>
+    <span class="egg" style="left: 88%; top: 28%; animation-delay: 0.4s;">🥚</span>
+    <span class="egg" style="left: 14%; top: 78%; animation-delay: 0.8s;">🐣</span>
+    <span class="egg" style="left: 82%; top: 70%; animation-delay: 1.2s;">🥚</span>
+    <span class="egg" style="left: 50%; top: 88%; animation-delay: 1.6s;">🐣</span>
+    <span class="egg" style="left: 30%; top: 12%; animation-delay: 2.0s;">🥚</span>
+    <span class="egg" style="left: 65%; top: 50%; animation-delay: 2.4s;">🐣</span>
+  </div>
+
+  <main style="max-width: 720px; margin: 64px auto 0;">
+    <h1 style="margin: 0 0 8px; color: var(--linkedin-blue); font-size: 36px;">🐔 Chicken</h1>
+    <p style="font-size: 18px; margin: 0 0 8px;">Just a chicken. Move your mouse &mdash; it'll follow.</p>
+    <p style="font-size: 16px; color: var(--text); margin: 0 0 24px;">Get close, and it'll start pecking.</p>
+
+    <p style="font-size: 15px; margin: 0 0 6px; color: var(--text-muted);">Pecks counted</p>
+    <p style="font-size: 48px; font-weight: 700; line-height: 1; color: var(--accent); margin: 0 0 24px;">
+      <span id="peck-count">0</span>
+    </p>
+
+    <p style="margin-top: 32px;">
+      <a href="../" style="color: var(--linkedin-blue); font-weight: 500; text-decoration: none;">&larr; Back to LinkedIn Translator</a>
+    </p>
+  </main>
+
+  <script src="../chicken.js"></script>
+  <script>
+    startChicken({
+      onPeck: function (count) {
+        document.getElementById('peck-count').textContent = count;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -11,10 +11,18 @@
     <h1>🐔 LinkedIn Translator: Savage Truth</h1>
     <p class="tagline">An AI-powered chicken that pecks at corporate LinkedIn posts and tells you what they actually mean.</p>
     <p class="subtitle">Singapore Stupid Hackathon 2026 &middot; cluck cluck</p>
+    <nav class="site-nav">
+      <a href="#about">About</a>
+      <a href="#demo">Live Demo</a>
+      <a href="#install">Install</a>
+      <a href="#changelog">Changelog</a>
+      <a href="chicken/">🐔 Chicken</a>
+      <a href="https://github.com/t-kandasami/makeLinkedinReadableAgain" target="_blank" rel="noopener">GitHub</a>
+    </nav>
   </header>
 
   <main>
-    <section class="about">
+    <section class="about" id="about">
       <h2>What is this?</h2>
       <p>Highlight any cringe LinkedIn post. A floating <strong>🐔 Translate</strong> button appears next to your selection. Click it. A loading window opens with a chicken that follows your cursor and pecks at it (yes, really). 1&ndash;3 seconds later the post's <em>actual</em> meaning is on screen &mdash; clichés underlined on the left, a Real Life Translation card on the right.</p>
       <p>The real product is a Tampermonkey userscript that runs on linkedin.com. The widget below is a live demo so you can play with it without installing anything.</p>
@@ -28,7 +36,7 @@
       </ul>
     </section>
 
-    <section class="demo">
+    <section class="demo" id="demo">
       <h2>Live Demo &mdash; feed the chicken 🐔</h2>
       <p style="color: var(--text-muted); font-size: 14px; margin-top: -8px;">
         Requires the backend running locally on <code>http://localhost:8000</code> &mdash; <code>docker compose up</code> from the project root.
@@ -41,7 +49,7 @@
       <div id="demo-output"></div>
     </section>
 
-    <section class="install">
+    <section class="install" id="install">
       <h2>Install the userscript</h2>
       <ol>
         <li>Make sure the backend is running on <code>http://localhost:8000</code> (this page wouldn't load otherwise).</li>
@@ -51,9 +59,13 @@
       </ol>
     </section>
 
-    <section class="changelog">
+    <section class="changelog" id="changelog">
       <h2>Changelog</h2>
       <ul id="changelog-list">
+        <li>
+          <span class="date">2026-05-02</span>
+          <span class="entry">Added a nav header with a dedicated <a href="chicken/"><strong>🐔 Chicken</strong></a> page at <code>/chicken/</code> &mdash; same cursor-following chicken as the loading screen, plus a live "pecks counted" tally. Chicken logic extracted into <code>chicken.js</code>; CSS factored into <code>style.css</code>. Both pages share one source of chicken truth.</span>
+        </li>
         <li>
           <span class="date">2026-05-02</span>
           <span class="entry">🐔 Chicken theme. Loading screen now has a chicken emoji that follows your cursor and pecks at it when it gets close, with random "<em>cluck!</em>" / "<em>*peck*</em>" / "<em>bawk!</em>" bursts. Egg-shell yellow background with floating eggs. The Translate button (userscript v0.1.5 + live demo) now reads <code>🐔 Translate</code> / <code>🐔 Clucking…</code>. Userscript description updated: "Powered by chickens."</span>

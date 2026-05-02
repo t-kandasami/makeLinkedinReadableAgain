@@ -82,6 +82,103 @@ section h2 {
   font-size: 16px;
 }
 
+/* ---------- Site nav ---------- */
+.site-nav {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.site-nav a {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 120ms;
+}
+.site-nav a:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* ---------- Chicken page (shared by /loading and /chicken) ---------- */
+.chicken-page {
+  background: #fff8e1;
+  background-image:
+    radial-gradient(circle at 20% 80%, #ffe89a 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, #fff1c1 0%, transparent 40%);
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 32px;
+  overflow: hidden;
+}
+.chicken-tracker {
+  position: fixed;
+  left: 0; top: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+.chicken-face {
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+.chicken-body {
+  display: inline-block;
+  font-size: 56px;
+  line-height: 1;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+}
+.chicken-tracker.peck .chicken-body {
+  animation: peck 320ms ease-in-out infinite;
+}
+@keyframes peck {
+  0%, 100% { transform: rotate(0deg); }
+  45%, 55% { transform: rotate(45deg) translate(2px, -2px); }
+}
+.cluck-burst {
+  position: fixed;
+  pointer-events: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  transform: translate(-50%, 0);
+  animation: cluckFloat 900ms ease-out forwards;
+  z-index: 9998;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+@keyframes cluckFloat {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5) rotate(-5deg); }
+  30%  { opacity: 1; transform: translate(-50%, -22px) scale(1.15) rotate(5deg); }
+  100% { opacity: 0; transform: translate(-50%, -56px) scale(0.9) rotate(0deg); }
+}
+.egg-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+}
+.egg {
+  position: absolute;
+  font-size: 22px;
+  animation: bob 4s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.chicken-page main {
+  position: relative;
+  z-index: 1;
+}
+
 /* ---------- Live demo ---------- */
 .demo-form textarea {
   width: 100%;

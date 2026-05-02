@@ -4,92 +4,8 @@
   <meta charset="UTF-8">
   <title>Clucking&hellip;</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body.popup-body {
-      padding: 32px;
-      background: #fff8e1;        /* egg-shell */
-      background-image: radial-gradient(circle at 20% 80%, #ffe89a 0%, transparent 40%),
-                        radial-gradient(circle at 80% 20%, #fff1c1 0%, transparent 40%);
-      min-height: 100vh;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-    h2 {
-      margin: 0 0 8px;
-      color: var(--linkedin-blue);
-      font-size: 28px;
-    }
-    .hint { color: var(--text-muted); font-size: 13px; margin-top: 18px; }
-
-    /* Cursor stays visible — the chicken follows alongside it. */
-
-    .chicken-tracker {
-      position: fixed;
-      left: 0; top: 0;
-      pointer-events: none;
-      z-index: 9999;
-      will-change: transform;
-    }
-    .chicken-face {
-      display: inline-block;
-      transition: transform 180ms ease;
-    }
-    .chicken-body {
-      display: inline-block;
-      font-size: 56px;
-      line-height: 1;
-      transform-origin: 50% 100%;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
-    }
-    .chicken-tracker.peck .chicken-body {
-      animation: peck 320ms ease-in-out infinite;
-    }
-    @keyframes peck {
-      0%, 100% { transform: rotate(0deg); }
-      45%      { transform: rotate(45deg) translate(2px, -2px); }
-      55%      { transform: rotate(45deg) translate(2px, -2px); }
-    }
-
-    /* Cluck/peck text bursts when the chicken pecks. */
-    .cluck-burst {
-      position: fixed;
-      pointer-events: none;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--accent);
-      transform: translate(-50%, 0);
-      animation: cluckFloat 900ms ease-out forwards;
-      z-index: 9998;
-      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-    }
-    @keyframes cluckFloat {
-      0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5) rotate(-5deg); }
-      30%  { opacity: 1; transform: translate(-50%, -22px) scale(1.15) rotate(5deg); }
-      100% { opacity: 0; transform: translate(-50%, -56px) scale(0.9) rotate(0deg); }
-    }
-
-    /* Egg dots that float in the background */
-    .egg-bg {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.35;
-    }
-    .egg {
-      position: absolute;
-      font-size: 22px;
-      animation: bob 4s ease-in-out infinite;
-    }
-    @keyframes bob {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-8px); }
-    }
-
-    main { position: relative; z-index: 1; }
-  </style>
 </head>
-<body class="popup-body">
+<body class="popup-body chicken-page">
   <div class="egg-bg" aria-hidden="true">
     <span class="egg" style="left: 6%;  top: 18%; animation-delay: 0s;">🥚</span>
     <span class="egg" style="left: 88%; top: 28%; animation-delay: 0.4s;">🥚</span>
@@ -99,78 +15,13 @@
   </div>
 
   <main>
-    <h2>🐔 Clucking&hellip;</h2>
+    <h2 style="margin: 0 0 8px; color: var(--linkedin-blue); font-size: 28px;">🐔 Clucking&hellip;</h2>
     <p>Our chicken is pecking at your LinkedIn post. This usually takes 1&ndash;3 seconds.</p>
-    <p class="hint">Move your mouse around &mdash; the chicken follows.</p>
-    <p class="hint">If this page never updates, open the linkedin.com tab's DevTools (F12) &rarr; Console and look for <code>[LinkedInTranslator]</code> log lines.</p>
+    <p style="color: var(--text-muted); font-size: 13px; margin-top: 18px;">Move your mouse around &mdash; the chicken follows.</p>
+    <p style="color: var(--text-muted); font-size: 13px;">If this page never updates, open the linkedin.com tab's DevTools (F12) &rarr; Console and look for <code>[LinkedInTranslator]</code> log lines.</p>
   </main>
 
-  <div class="chicken-tracker" id="chicken-tracker" aria-hidden="true">
-    <div class="chicken-face" id="chicken-face">
-      <div class="chicken-body">🐔</div>
-    </div>
-  </div>
-
-  <script>
-    (function () {
-      const tracker = document.getElementById('chicken-tracker');
-      const face = document.getElementById('chicken-face');
-      const PECK_DISTANCE = 110;
-      const FOLLOW_EASE = 0.10;
-
-      let mx = window.innerWidth / 2;
-      let my = window.innerHeight / 2;
-      let cx = mx, cy = my;
-      let dir = 1;                  // 1 = chicken facing right, -1 = left
-      let lastBurst = 0;
-
-      const SOUNDS = ['cluck!', '*peck*', 'bawk!', 'pock!', 'cluck cluck'];
-
-      document.addEventListener('mousemove', (e) => {
-        mx = e.clientX;
-        my = e.clientY;
-      });
-
-      function spawnCluck(x, y) {
-        const word = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
-        const el = document.createElement('div');
-        el.className = 'cluck-burst';
-        el.textContent = word;
-        el.style.left = x + 'px';
-        el.style.top = (y - 8) + 'px';
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1100);
-      }
-
-      function tick() {
-        cx += (mx - cx) * FOLLOW_EASE;
-        cy += (my - cy) * FOLLOW_EASE;
-
-        const dx = mx - cx;
-        const dy = my - cy;
-        const dist = Math.hypot(dx, dy);
-
-        if (Math.abs(dx) > 8) dir = dx >= 0 ? 1 : -1;
-
-        // Position the chicken so the head/beak roughly aligns with the cursor.
-        tracker.style.transform = `translate(${cx - 28}px, ${cy - 48}px)`;
-        face.style.transform = `scaleX(${dir})`;
-
-        if (dist < PECK_DISTANCE) {
-          if (!tracker.classList.contains('peck')) tracker.classList.add('peck');
-          const now = performance.now();
-          if (now - lastBurst > 600) {
-            lastBurst = now;
-            spawnCluck(mx, my);
-          }
-        } else {
-          tracker.classList.remove('peck');
-        }
-
-        requestAnimationFrame(tick);
-      }
-      tick();
-    })();
-  </script>
+  <script src="chicken.js"></script>
+  <script>startChicken();</script>
 </body>
 </html>
