@@ -48,6 +48,10 @@
       <ul id="changelog-list">
         <li>
           <span class="date">2026-05-02</span>
+          <span class="entry">Userscript v0.1.2: fixed the white-popup bug. linkedin.com's CSP enforces Trusted Types, which silently blocked <code>document.write</code>. The popup now navigates to <code>blob:</code> URLs containing the HTML &mdash; blob documents have no CSP header, so external scripts (style.css, render.js) and inline JS run normally.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
           <span class="entry">Userscript v0.1.1: comprehensive debug logging, an immediate "Translating&hellip;" placeholder in the popup, visible status line for asset-load failures (style.css / render.js), inline fallback styling so the popup is never pure white, and a collapsed Debug-data panel showing raw API responses.</span>
         </li>
         <li>

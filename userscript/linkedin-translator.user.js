@@ -1,12 +1,16 @@
 // ==UserScript==
 // @name         LinkedIn Translator: Savage Truth
 // @namespace    https://github.com/asish-stupid-hackathon
-// @version      0.1.1
+// @version      0.1.2
 // @description  Reveal the hidden emotional truth behind corporate LinkedIn posts.
 // @author       Stupid Hackathon Singapore 2026
 // @match        https://www.linkedin.com/*
 // @grant        none
 // ==/UserScript==
+
+// v0.1.2: bypass linkedin.com's Trusted Types CSP by navigating the popup to
+// blob: URLs instead of using document.write. Blob documents have no CSP
+// header, so external scripts/styles and inline JS run normally there.
 
 (function () {
   'use strict';
@@ -74,6 +78,25 @@
     else hideButton();
   }
 
+  // Navigate the popup to a blob: URL containing the given HTML.
+  // Bypasses linkedin.com's Trusted Types CSP (which blocks document.write).
+  function navigateToBlob(popup, html) {
+    if (!popup || popup.closed) {
+      console.warn(TAG, 'navigateToBlob: popup unavailable');
+      return;
+    }
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    try {
+      popup.location.replace(url);
+    } catch (e) {
+      console.error(TAG, 'navigateToBlob: location.replace failed, trying href', e);
+      popup.location.href = url;
+    }
+    // Revoke the URL after the popup has had time to load it.
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
   async function onTranslateClick(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -91,7 +114,7 @@
     floatingBtn.disabled = true;
     floatingBtn.textContent = 'Translating...';
 
-    // Open the popup synchronously inside the click handler so popup blockers don't fire.
+    // Open popup synchronously inside the click handler so popup blockers don't fire.
     const popup = window.open('about:blank', 'lt-savage', 'width=960,height=640');
     if (!popup) {
       console.error(TAG, 'popup was blocked by the browser');
@@ -104,9 +127,9 @@
     }
     console.log('popup opened');
 
-    // Immediate placeholder so a blank popup means document.write itself failed.
-    writeLoadingHTML(popup, text);
-    console.log('loading placeholder written into popup');
+    // Immediate placeholder via blob URL.
+    navigateToBlob(popup, buildLoadingHTML(text));
+    console.log('loading placeholder navigated to (blob URL)');
 
     try {
       console.log('fetching', `${BACKEND}/translate`, 'and', `${BACKEND}/highlights`);
@@ -136,11 +159,11 @@
         : [];
       console.log('highlights count:', highlights.length, highlights);
 
-      writePopupHTML(popup, { original: text, translation, highlights });
-      console.log('popup HTML written, render.js URL:', `${BACKEND}/render.js`);
+      navigateToBlob(popup, buildResultHTML({ original: text, translation, highlights }));
+      console.log('popup navigated to result blob URL, render.js URL:', `${BACKEND}/render.js`);
     } catch (err) {
       console.error(TAG, 'error during translation:', err);
-      writePopupError(popup, err.message);
+      navigateToBlob(popup, buildErrorHTML(err.message));
     } finally {
       busy = false;
       if (floatingBtn) {
@@ -152,10 +175,9 @@
     }
   }
 
-  function writeLoadingHTML(popup, text) {
-    if (!popup || popup.closed) return;
+  function buildLoadingHTML(text) {
     const safe = String(text).slice(0, 400).replace(/</g, '&lt;');
-    const html = `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -173,19 +195,12 @@
   <details><summary>Selected text (${text.length} chars)</summary><pre>${safe}</pre></details>
   <p class="hint">If this page never updates, open the linkedin.com tab's DevTools (F12) &rarr; Console, and look for <code>${TAG}</code> log lines. They'll tell you which step failed.</p>
 </body></html>`;
-    popup.document.open();
-    popup.document.write(html);
-    popup.document.close();
   }
 
-  function writePopupHTML(popup, data) {
-    if (!popup || popup.closed) {
-      console.warn(TAG, 'popup closed before HTML could be written');
-      return;
-    }
+  function buildResultHTML(data) {
     // Inline JSON: replace `<` so a stray `</script>` in the data can't terminate our script tag.
     const json = JSON.stringify(data).replace(/</g, '\\u003c');
-    const html = `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -195,7 +210,7 @@
     document.getElementById('lt-status').style.color='#d11149';
   ">
   <style>
-    /* Minimal fallback so the page isn't pure white if style.css fails. */
+    /* Fallback so the page isn't pure white if style.css fails. */
     body { font-family: system-ui, sans-serif; padding: 24px; background: #f3f2ef; color: #1d2226; }
     #lt-status { font-size: 13px; color: #56687a; margin-bottom: 12px; }
     #lt-debug { margin-top: 24px; font-size: 12px; color: #56687a; }
@@ -237,15 +252,11 @@
   <\/script>
 </body>
 </html>`;
-    popup.document.open();
-    popup.document.write(html);
-    popup.document.close();
   }
 
-  function writePopupError(popup, msg) {
-    if (!popup || popup.closed) return;
+  function buildErrorHTML(msg) {
     const safe = String(msg).replace(/</g, '&lt;');
-    const html = `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Error</title>
 <link rel="stylesheet" href="${BACKEND}/style.css">
 <style>body{font-family:system-ui,sans-serif;padding:24px;background:#f3f2ef}</style>
@@ -258,9 +269,6 @@
   </div>
   <p style="margin-top:16px;color:#666;font-size:13px">Open the linkedin.com tab's DevTools (F12) &rarr; Console for the full <code>${TAG}</code> trace.</p>
 </body></html>`;
-    popup.document.open();
-    popup.document.write(html);
-    popup.document.close();
   }
 
   document.addEventListener('selectionchange', onSelectionChange);
