@@ -1,16 +1,17 @@
 // ==UserScript==
 // @name         LinkedIn Translator: Savage Truth
 // @namespace    https://github.com/asish-stupid-hackathon
-// @version      0.1.2
+// @version      0.1.3
 // @description  Reveal the hidden emotional truth behind corporate LinkedIn posts.
 // @author       Stupid Hackathon Singapore 2026
 // @match        https://www.linkedin.com/*
 // @grant        none
 // ==/UserScript==
 
-// v0.1.2: bypass linkedin.com's Trusted Types CSP by navigating the popup to
-// blob: URLs instead of using document.write. Blob documents have no CSP
-// header, so external scripts/styles and inline JS run normally there.
+// v0.1.3: open the popup at the BACKEND's loading.html URL, then navigate
+// to popup.html#<json-data>. The popup's origin is localhost:8000, which has
+// no CSP, so style.css + render.js + inline scripts all run normally.
+// (v0.1.2 used blob: URLs but those still inherit linkedin.com's CSP.)
 
 (function () {
   'use strict';
@@ -78,23 +79,13 @@
     else hideButton();
   }
 
-  // Navigate the popup to a blob: URL containing the given HTML.
-  // Bypasses linkedin.com's Trusted Types CSP (which blocks document.write).
-  function navigateToBlob(popup, html) {
+  function navigatePopup(popup, payload) {
     if (!popup || popup.closed) {
-      console.warn(TAG, 'navigateToBlob: popup unavailable');
+      console.warn(TAG, 'popup unavailable for navigation');
       return;
     }
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    try {
-      popup.location.replace(url);
-    } catch (e) {
-      console.error(TAG, 'navigateToBlob: location.replace failed, trying href', e);
-      popup.location.href = url;
-    }
-    // Revoke the URL after the popup has had time to load it.
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    const hash = encodeURIComponent(JSON.stringify(payload));
+    popup.location.href = `${BACKEND}/popup.html#${hash}`;
   }
 
   async function onTranslateClick(e) {
@@ -114,8 +105,9 @@
     floatingBtn.disabled = true;
     floatingBtn.textContent = 'Translating...';
 
-    // Open popup synchronously inside the click handler so popup blockers don't fire.
-    const popup = window.open('about:blank', 'lt-savage', 'width=960,height=640');
+    // Open the popup at the backend's loading page. Popup's origin is
+    // localhost:8000, so linkedin.com's CSP doesn't apply.
+    const popup = window.open(`${BACKEND}/loading.html`, 'lt-savage', 'width=960,height=640');
     if (!popup) {
       console.error(TAG, 'popup was blocked by the browser');
       alert('Popup blocked. Allow popups for linkedin.com in your browser, then try again.');
@@ -125,11 +117,7 @@
       console.groupEnd();
       return;
     }
-    console.log('popup opened');
-
-    // Immediate placeholder via blob URL.
-    navigateToBlob(popup, buildLoadingHTML(text));
-    console.log('loading placeholder navigated to (blob URL)');
+    console.log('popup opened at', `${BACKEND}/loading.html`);
 
     try {
       console.log('fetching', `${BACKEND}/translate`, 'and', `${BACKEND}/highlights`);
@@ -159,11 +147,11 @@
         : [];
       console.log('highlights count:', highlights.length, highlights);
 
-      navigateToBlob(popup, buildResultHTML({ original: text, translation, highlights }));
-      console.log('popup navigated to result blob URL, render.js URL:', `${BACKEND}/render.js`);
+      navigatePopup(popup, { original: text, translation, highlights });
+      console.log('popup navigated to result page');
     } catch (err) {
       console.error(TAG, 'error during translation:', err);
-      navigateToBlob(popup, buildErrorHTML(err.message));
+      navigatePopup(popup, { error: err.message });
     } finally {
       busy = false;
       if (floatingBtn) {
@@ -173,102 +161,6 @@
       hideButton();
       console.groupEnd();
     }
-  }
-
-  function buildLoadingHTML(text) {
-    const safe = String(text).slice(0, 400).replace(/</g, '&lt;');
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Translating&hellip;</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; padding: 32px; color: #333; background: #f3f2ef; }
-    h2 { margin-top: 0; }
-    .hint { color: #666; font-size: 13px; margin-top: 24px; }
-    pre { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; white-space: pre-wrap; max-height: 200px; overflow: auto; }
-  </style>
-</head>
-<body>
-  <h2>Translating&hellip;</h2>
-  <p>Asking the AI to be brutally honest. This usually takes 1&ndash;3 seconds.</p>
-  <details><summary>Selected text (${text.length} chars)</summary><pre>${safe}</pre></details>
-  <p class="hint">If this page never updates, open the linkedin.com tab's DevTools (F12) &rarr; Console, and look for <code>${TAG}</code> log lines. They'll tell you which step failed.</p>
-</body></html>`;
-  }
-
-  function buildResultHTML(data) {
-    // Inline JSON: replace `<` so a stray `</script>` in the data can't terminate our script tag.
-    const json = JSON.stringify(data).replace(/</g, '\\u003c');
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>LinkedIn Translator &mdash; Savage Truth</title>
-  <link rel="stylesheet" href="${BACKEND}/style.css" onerror="
-    document.getElementById('lt-status').textContent='style.css failed to load from ${BACKEND}/style.css — check that the backend is running and serving it.';
-    document.getElementById('lt-status').style.color='#d11149';
-  ">
-  <style>
-    /* Fallback so the page isn't pure white if style.css fails. */
-    body { font-family: system-ui, sans-serif; padding: 24px; background: #f3f2ef; color: #1d2226; }
-    #lt-status { font-size: 13px; color: #56687a; margin-bottom: 12px; }
-    #lt-debug { margin-top: 24px; font-size: 12px; color: #56687a; }
-    #lt-debug pre { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; white-space: pre-wrap; max-height: 320px; overflow: auto; }
-  </style>
-</head>
-<body class="popup-body">
-  <div id="lt-status">Loading renderer&hellip;</div>
-  <div id="root"></div>
-  <details id="lt-debug">
-    <summary>Debug data (raw API responses)</summary>
-    <pre id="lt-debug-data"></pre>
-  </details>
-  <script src="${BACKEND}/render.js" onerror="
-    document.getElementById('lt-status').textContent='render.js failed to load from ${BACKEND}/render.js — check that the backend is running and serving it.';
-    document.getElementById('lt-status').style.color='#d11149';
-    console.error('[LinkedInTranslator popup] render.js failed to load');
-  "><\/script>
-  <script>
-    (function () {
-      var TAG = '[LinkedInTranslator popup]';
-      var data = ${json};
-      console.log(TAG, 'inline init, data:', data);
-      try {
-        document.getElementById('lt-debug-data').textContent = JSON.stringify(data, null, 2);
-        if (typeof window.renderMemeCard !== 'function') {
-          throw new Error('window.renderMemeCard is not a function — render.js did not load or did not register the function');
-        }
-        window.renderMemeCard(document.getElementById('root'), data);
-        document.getElementById('lt-status').textContent = '';
-        console.log(TAG, 'render complete');
-      } catch (e) {
-        var status = document.getElementById('lt-status');
-        status.textContent = 'Render error: ' + e.message;
-        status.style.color = '#d11149';
-        console.error(TAG, 'render error:', e);
-      }
-    })();
-  <\/script>
-</body>
-</html>`;
-  }
-
-  function buildErrorHTML(msg) {
-    const safe = String(msg).replace(/</g, '&lt;');
-    return `<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Error</title>
-<link rel="stylesheet" href="${BACKEND}/style.css">
-<style>body{font-family:system-ui,sans-serif;padding:24px;background:#f3f2ef}</style>
-</head>
-<body class="popup-body">
-  <div class="error" style="padding:16px;background:#ffe8ef;border:1px solid #d11149;border-radius:10px;color:#d11149">
-    <strong>Translation failed.</strong><br>
-    ${safe}<br><br>
-    <em>Is the backend running on ${BACKEND}? Try <code>docker compose up</code> from the project root.</em>
-  </div>
-  <p style="margin-top:16px;color:#666;font-size:13px">Open the linkedin.com tab's DevTools (F12) &rarr; Console for the full <code>${TAG}</code> trace.</p>
-</body></html>`;
   }
 
   document.addEventListener('selectionchange', onSelectionChange);

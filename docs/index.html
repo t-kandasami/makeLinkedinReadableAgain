@@ -48,6 +48,10 @@
       <ul id="changelog-list">
         <li>
           <span class="date">2026-05-02</span>
+          <span class="entry">Userscript v0.1.3: real fix for the white-popup bug. The v0.1.2 blob: URL approach still inherited linkedin.com's <code>style-src</code>/<code>script-src</code> CSP, blocking the localhost stylesheet and renderer. Now the popup is opened at <code>http://localhost:8000/loading.html</code> directly, then navigated to <code>http://localhost:8000/popup.html#&lt;data&gt;</code> &mdash; the popup's origin is localhost, which has no CSP. Translation data is passed via the URL hash so it stays client-side.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
           <span class="entry">Userscript v0.1.2: fixed the white-popup bug. linkedin.com's CSP enforces Trusted Types, which silently blocked <code>document.write</code>. The popup now navigates to <code>blob:</code> URLs containing the HTML &mdash; blob documents have no CSP header, so external scripts (style.css, render.js) and inline JS run normally.</span>
         </li>
         <li>

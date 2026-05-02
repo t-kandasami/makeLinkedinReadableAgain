@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Translating&hellip;</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body.popup-body { padding: 32px; }
+    h2 { margin-top: 0; color: var(--linkedin-blue); }
+    .hint { color: var(--text-muted); font-size: 13px; margin-top: 24px; }
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="popup-body">
+  <h2><span class="spinner"></span>Translating&hellip;</h2>
+  <p>Asking the AI to be brutally honest. This usually takes 1&ndash;3 seconds.</p>
+  <p class="hint">If this page never updates, open the linkedin.com tab's DevTools (F12) &rarr; Console, and look for <code>[LinkedInTranslator]</code> log lines &mdash; they'll tell you which step failed.</p>
+</body>
+</html>

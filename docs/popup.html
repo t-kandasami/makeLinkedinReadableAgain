@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LinkedIn Translator &mdash; Savage Truth</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #lt-status { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    #lt-status.error { color: var(--accent); font-weight: 500; }
+    #lt-debug { margin-top: 24px; font-size: 12px; color: var(--text-muted); }
+    #lt-debug pre {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      white-space: pre-wrap;
+      max-height: 320px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body class="popup-body">
+  <div id="lt-status">Loading&hellip;</div>
+  <div id="root"></div>
+  <details id="lt-debug">
+    <summary>Debug data (raw API responses)</summary>
+    <pre id="lt-debug-data"></pre>
+  </details>
+
+  <script src="render.js"></script>
+  <script>
+    (function () {
+      var TAG = '[LinkedInTranslator popup]';
+      var status = document.getElementById('lt-status');
+      var root = document.getElementById('root');
+      var debugData = document.getElementById('lt-debug-data');
+
+      function showError(msg) {
+        status.textContent = msg;
+        status.classList.add('error');
+        console.error(TAG, msg);
+      }
+
+      try {
+        var hash = window.location.hash.slice(1);
+        if (!hash) {
+          showError('No data in URL hash. The userscript opened this page without translation data.');
+          return;
+        }
+
+        var data;
+        try {
+          data = JSON.parse(decodeURIComponent(hash));
+        } catch (e) {
+          showError('Failed to parse data from URL hash: ' + e.message);
+          return;
+        }
+
+        console.log(TAG, 'received data', data);
+        debugData.textContent = JSON.stringify(data, null, 2);
+
+        if (data.error) {
+          showError('Translation failed: ' + data.error);
+          return;
+        }
+
+        if (typeof window.renderMemeCard !== 'function') {
+          showError('renderMemeCard not loaded — render.js did not register the function.');
+          return;
+        }
+
+        window.renderMemeCard(root, data);
+        status.textContent = '';
+        status.classList.remove('error');
+        console.log(TAG, 'render complete');
+      } catch (e) {
+        showError('Unexpected error: ' + e.message);
+      }
+    })();
+  </script>
+</body>
+</html>
