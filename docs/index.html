@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinkedIn Translator: Savage Truth</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
@@ -22,6 +22,9 @@
 
     <section class="demo">
       <h2>Live Demo</h2>
+      <p style="color: var(--text-muted); font-size: 14px; margin-top: -8px;">
+        Requires the backend running locally on <code>http://localhost:8000</code> &mdash; <code>docker compose up</code> from the project root.
+      </p>
       <form class="demo-form" id="demo-form">
         <label for="demo-input" class="sr-only">Paste a LinkedIn post</label>
         <textarea id="demo-input" placeholder="Paste any LinkedIn post here. Try a humblebrag for best results."></textarea>
@@ -45,6 +48,14 @@
       <ul id="changelog-list">
         <li>
           <span class="date">2026-05-02</span>
+          <span class="entry">Live demo now calls <code>http://localhost:8000</code> directly (absolute URL), and the backend's CORS allowlist includes <code>https://t-kandasami.github.io</code> &mdash; so the demo widget works on the deployed page as long as the visitor has the backend running locally.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
+          <span class="entry">Moved static site from <code>backend/static/</code> to <code>/docs/</code> so GitHub Pages can serve it. Local backend reads the same files via the <code>STATIC_DIR</code> env var &mdash; one source of truth across local + deployed.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
           <span class="entry">Initial build &mdash; FastAPI backend with <code>/translate</code> and <code>/highlights</code>, Tampermonkey userscript with floating selection button + popup window, live demo widget on this page, shared meme-card renderer.</span>
         </li>
       </ul>
@@ -58,7 +69,7 @@
     Built for the Singapore Stupid Hackathon 2026 &middot; localhost only &middot; gpt-4o-mini
   </footer>
 
-  <script src="/render.js"></script>
-  <script src="/demo.js"></script>
+  <script src="render.js"></script>
+  <script src="demo.js"></script>
 </body>
 </html>

@@ -41,6 +41,7 @@ app.add_middleware(
         "https://linkedin.com",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "https://t-kandasami.github.io",
     ],
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
@@ -89,4 +90,7 @@ async def highlights(req: HighlightsRequest):
 
 
 # Static site (showcase + live demo + changelog) at /
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+# Sourced from /docs at the repo root so GitHub Pages and the local backend
+# serve identical content. Override STATIC_DIR to point elsewhere.
+STATIC_DIR = os.environ.get("STATIC_DIR", "../docs")
+app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

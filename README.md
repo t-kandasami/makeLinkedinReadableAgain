@@ -52,7 +52,7 @@ Three independent units, one job each:
 - **FastAPI backend** &mdash; OpenAI proxy + key vault. Knows nothing about HTML.
 - **Static website** (served by the backend at `/`) &mdash; showcase + live demo + changelog.
 
-The popup window opened by the userscript and the live-demo widget on the website both use the **same renderer** (`backend/static/render.js`). Single source of truth for the meme-card UI.
+The popup window opened by the userscript and the live-demo widget on the website both use the **same renderer** (`docs/render.js`). Single source of truth for the meme-card UI &mdash; the local backend serves `/docs` at `/`, and GitHub Pages serves the same `/docs` folder publicly.
 
 ---
 
@@ -72,12 +72,13 @@ smustuff/
 │   ├── Dockerfile                     ← python:3.12-slim → uvicorn
 │   ├── .dockerignore
 │   ├── .env.example                   ← OPENAI_API_KEY=sk-...
-│   ├── test.sh                        ← 5 curl smoke tests
-│   └── static/                        ← served at GET /
-│       ├── index.html                 ← showcase + live demo + changelog
-│       ├── style.css                  ← shared styling
-│       ├── render.js                  ← meme-card renderer (single source)
-│       └── demo.js                    ← wires the live demo widget
+│   └── test.sh                        ← 5 curl smoke tests
+│
+├── docs/                              ← served at GET / locally AND by GitHub Pages
+│   ├── index.html                     ← showcase + live demo + changelog
+│   ├── style.css                      ← shared styling
+│   ├── render.js                      ← meme-card renderer (single source)
+│   └── demo.js                        ← wires the live demo widget
 │
 └── userscript/
     └── linkedin-translator.user.js    ← Tampermonkey script
@@ -129,6 +130,21 @@ uvicorn main:app --reload
 1. Install [Tampermonkey](https://www.tampermonkey.net/).
 2. Open `userscript/linkedin-translator.user.js` in your browser. Tampermonkey will detect the metadata header and offer to install.
 3. Visit linkedin.com. Highlight any post. Click the floating **Translate** button.
+
+---
+
+## Deploying the showcase to GitHub Pages
+
+The static site lives in [`/docs`](docs/) so GitHub Pages can serve it directly.
+
+1. Push to GitHub (`git push -u origin main`).
+2. On GitHub, go to **Settings → Pages**.
+3. Under **Source**, choose **Deploy from a branch**. Branch: `main`, folder: `/docs`.
+4. Save. After ~1 minute the page appears at `https://<owner>.github.io/<repo>/`.
+
+**The live-demo widget on GitHub Pages calls `http://localhost:8000` directly.** That means the visitor must have the FastAPI backend running locally for it to work — there is no shared deployed backend. The CORS allowlist in `backend/main.py` already includes `https://t-kandasami.github.io`, so the cross-origin call works as long as `docker compose up` is running on the visitor's machine.
+
+If you fork the repo to a different GitHub account, add your own `https://<your-user>.github.io` to the `allow_origins` list in [backend/main.py](backend/main.py).
 
 ---
 
