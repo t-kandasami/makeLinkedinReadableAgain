@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         LinkedIn Translator: Savage Truth
 // @namespace    https://github.com/asish-stupid-hackathon
-// @version      0.1.4
-// @description  Reveal the hidden emotional truth behind corporate LinkedIn posts.
+// @version      0.1.5
+// @description  Reveal the hidden emotional truth behind corporate LinkedIn posts. Powered by chickens.
 // @author       Stupid Hackathon Singapore 2026
 // @match        https://www.linkedin.com/*
 // @grant        GM_xmlhttpRequest
@@ -52,7 +52,7 @@
   function ensureButton() {
     if (floatingBtn) return floatingBtn;
     floatingBtn = document.createElement('button');
-    floatingBtn.textContent = 'Translate';
+    floatingBtn.textContent = '🐔 Translate';
     floatingBtn.id = 'lt-savage-btn';
     Object.assign(floatingBtn.style, {
       position: 'absolute',
@@ -139,7 +139,7 @@
     console.log('selected text:', text);
     busy = true;
     floatingBtn.disabled = true;
-    floatingBtn.textContent = 'Translating...';
+    floatingBtn.textContent = '🐔 Clucking...';
 
     const popup = window.open(`${BACKEND}/loading.html`, 'lt-savage', 'width=960,height=640');
     if (!popup) {
@@ -147,7 +147,7 @@
       alert('Popup blocked. Allow popups for linkedin.com in your browser, then try again.');
       busy = false;
       floatingBtn.disabled = false;
-      floatingBtn.textContent = 'Translate';
+      floatingBtn.textContent = '🐔 Translate';
       console.groupEnd();
       return;
     }
@@ -198,7 +198,7 @@
       busy = false;
       if (floatingBtn) {
         floatingBtn.disabled = false;
-        floatingBtn.textContent = 'Translate';
+        floatingBtn.textContent = '🐔 Translate';
       }
       hideButton();
       console.groupEnd();

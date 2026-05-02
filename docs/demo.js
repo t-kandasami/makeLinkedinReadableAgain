@@ -29,8 +29,8 @@
     console.group(TAG, 'translate clicked');
     console.log('post text length:', post.length);
     submit.disabled = true;
-    submit.textContent = 'Translating...';
-    output.innerHTML = '<p class="demo-loading">Asking the AI to be brutally honest...</p>';
+    submit.textContent = '🐔 Clucking...';
+    output.innerHTML = '<p class="demo-loading">Chicken is pecking at your post...</p>';
 
     try {
       console.log('fetching', `${BACKEND}/translate`, 'and', `${BACKEND}/highlights`);
@@ -67,7 +67,7 @@
       window.renderError(output, friendlyError(err));
     } finally {
       submit.disabled = false;
-      submit.textContent = 'Translate';
+      submit.textContent = '🐔 Translate';
       console.groupEnd();
     }
   });
