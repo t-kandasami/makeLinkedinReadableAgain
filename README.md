@@ -1,6 +1,6 @@
-# LinkedIn Translator: Savage Truth
+# 🐔 LinkedIn Translator: Savage Truth
 
-An AI-powered LinkedIn translator that reveals the hidden emotional truth behind corporate posts. **Real life vs LinkedIn.**
+An AI-powered chicken that pecks at corporate LinkedIn posts and tells you what they actually mean. **Real Life vs LinkedIn.**
 
 Built for the **Singapore Stupid Hackathon 2026** &mdash; May 2nd, SMU Connexion, Jay & Marilyn Ng Greenhouse, Level 4.
 
@@ -8,12 +8,14 @@ Built for the **Singapore Stupid Hackathon 2026** &mdash; May 2nd, SMU Connexion
 
 ## What it does
 
-You highlight any cringe LinkedIn post. A floating **Translate** button appears next to your selection. Click it. A new window pops open showing:
+You highlight any cringe LinkedIn post. A floating **🐔 Translate** button appears next to your selection. Click it. A loading window opens with a chicken that follows your cursor and pecks at it (random *cluck!* / *bawk!* bursts included). 1&ndash;3 seconds later, a meme card replaces it:
 
-- **Left side:** the original post, with corporate clichés underlined. Hover any underlined phrase for the plain-English meaning.
-- **Right side:** a "Real Life Translation" meme card &mdash; category, blunt restatement, alternate readings, spice meter, tags, caption.
+- **Left side ("LinkedIn"):** the original post, with corporate clichés underlined in dotted red. Hover any underlined phrase for the plain-English meaning.
+- **Right side ("Real Life"):** a "Real Life Translation" meme card &mdash; category badge, brutally honest 1&ndash;2 line restatement, alternate readings, 1&ndash;10 spice meter, tags, caption.
 
-A **live demo** is also served at `http://localhost:8000/` once the backend is running, so judges (or you) can play with it without installing the userscript.
+Each translation card has a **🔊 Speak button** that reads the line aloud using the browser's built-in text-to-speech &mdash; with **spice-driven voice modulation**. Spice 1 reads gentle and high-pitched; spice 10 reads deep, rushed, and menacing. Same translation, different vibes depending on how brutal the model rated the post.
+
+A **live demo** is also served at `http://localhost:8000/` (and on GitHub Pages once deployed) so judges and other hackers can paste-and-translate without installing the userscript.
 
 ---
 
@@ -174,11 +176,12 @@ If you see `all tests passed` you're good. If a test fails, check the backend te
 1. Visit https://www.linkedin.com (login optional &mdash; the script works on any public post).
 2. Find a post. Humblebrags, "thrilled to announce," and conference-energy posts give the best translations.
 3. **Highlight some text** with your cursor.
-4. A red **Translate** button appears just below the selection.
+4. A red **🐔 Translate** button appears just below the selection.
 5. Click it.
-6. A new window opens showing the side-by-side meme card:
+6. A loading window opens with a chicken that follows your cursor and pecks at it. Move your mouse around &mdash; the chicken will give chase. 1&ndash;3 seconds later the result replaces it:
    - **Left (LinkedIn):** the original post, with cliché phrases underlined. Hover any underline for the plain-English meaning.
    - **Right (Real Life):** category badge, the brutally honest translation, spice meter, tags, alternate readings, caption.
+7. Click the **🔊 Speak** button on the translation card to hear it read aloud. The voice's pitch and speed change with the spice level &mdash; spice 1 sounds sympathetic, spice 10 sounds demonic.
 
 That's it. Highlight more text, click Translate, get more translations. Each one costs about a US cent.
 
@@ -306,10 +309,11 @@ Five checks: healthz, translate happy path, highlights happy path, validation re
 ## Demo path (16:30 showcase)
 
 1. `docker compose up` &mdash; verify it's running.
-2. Open `http://localhost:8000/` &mdash; judges see the showcase page.
-3. Scroll to the live demo &mdash; paste a real LinkedIn humblebrag, click Translate, meme card renders inline.
-4. Open a new tab to linkedin.com &mdash; highlight any cringe post, click the floating Translate button, popup opens with the same card.
-5. If the userscript breaks live, the website demo still works. Belt + suspenders.
+2. Open `http://localhost:8000/` &mdash; judges see the chicken-themed showcase page.
+3. Scroll to the live demo &mdash; paste a real LinkedIn humblebrag, click **🐔 Translate**, meme card renders inline.
+4. Click the **🔊 Speak** button. Demonic voice reads a savage humblebrag aloud. Try a low-spice translation next so they hear how the voice changes.
+5. Open a new tab to linkedin.com &mdash; highlight any cringe post, click the floating **🐔 Translate** button. Loading window opens with **chicken following the cursor and pecking it**. Move the mouse around so judges notice. Result replaces it.
+6. If the userscript breaks live, the website demo still works. Belt + suspenders.
 
 ---
 
@@ -324,7 +328,9 @@ The website ([`docs/index.html`](docs/index.html)) and this README must be updat
 - [ ] `.env` has a real OpenAI key
 - [ ] `docker compose up` boots cleanly
 - [ ] `bash backend/test.sh` passes
-- [ ] Tampermonkey userscript installed in demo browser
+- [ ] Tampermonkey userscript v0.1.5 installed in demo browser (chicken Translate button visible)
+- [ ] Loading screen tested &mdash; chicken follows cursor, pecks at it
+- [ ] 🔊 Speak button tested on a low-spice and a high-spice translation (verify the voice difference)
 - [ ] LinkedIn tab open with a juicy humblebrag pre-loaded
 - [ ] Showcase page open in another tab as fallback
 - [ ] DevPost submission has the GitHub link

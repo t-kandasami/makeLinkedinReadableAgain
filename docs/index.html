@@ -16,8 +16,16 @@
   <main>
     <section class="about">
       <h2>What is this?</h2>
-      <p>Highlight any cringe LinkedIn post. A floating "Translate" button appears next to your selection. Click it. A new window opens showing the post's <em>actual</em> meaning &mdash; clichés underlined on the left, a Real Life Translation card on the right.</p>
+      <p>Highlight any cringe LinkedIn post. A floating <strong>🐔 Translate</strong> button appears next to your selection. Click it. A loading window opens with a chicken that follows your cursor and pecks at it (yes, really). 1&ndash;3 seconds later the post's <em>actual</em> meaning is on screen &mdash; clichés underlined on the left, a Real Life Translation card on the right.</p>
       <p>The real product is a Tampermonkey userscript that runs on linkedin.com. The widget below is a live demo so you can play with it without installing anything.</p>
+      <h3 style="margin-top: 24px; font-size: 16px; color: var(--text);">What's on the card</h3>
+      <ul style="color: var(--text); margin: 8px 0 0; padding-left: 22px;">
+        <li><strong>Category badge</strong> &mdash; one of: Humblebrag, ThoughtLeadership, FounderGrindset, NetworkingThirst, LayoffCoded, Promotion, ConferenceEnergy, CorporatePropaganda, VagueDrama, LifeLessonPost, RecruitingBait.</li>
+        <li><strong>1&ndash;10 spice meter</strong> &mdash; how brutal the translation is.</li>
+        <li><strong>🔊 Speak button</strong> &mdash; reads the translation aloud with <em>spice-driven voice modulation</em>. Spice 1 = sympathetic narrator. Spice 10 = demonic, rushed, deep-voiced. No audio assets, no API; uses the browser's built-in Web Speech API.</li>
+        <li><strong>Cliché phrase highlights</strong> &mdash; corporate clichés in the original post are underlined; hover to see the plain-English subtext.</li>
+        <li><strong>Two alternate readings + tags + caption</strong> &mdash; for when one translation isn't enough.</li>
+      </ul>
     </section>
 
     <section class="demo">
