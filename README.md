@@ -86,50 +86,144 @@ smustuff/
 
 ---
 
-## Running locally
+## Installation guide
 
-### 1. Install Docker
+### Prerequisites
 
-[Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine on Linux). Verify with `docker --version` and `docker compose version`.
+You'll need:
 
-### 2. Set your OpenAI key
+- A **Chromium-based browser** (Chrome, Edge, Brave) or **Firefox**.
+- **Git** &mdash; verify with `git --version`.
+- **Docker** + Docker Compose &mdash; [Docker Desktop](https://www.docker.com/products/docker-desktop/) on Mac/Windows; `sudo apt install docker.io docker-compose-plugin` on Debian/Ubuntu. Verify: `docker --version && docker compose version`.
+- An **OpenAI account** with API access and a payment method on file. Translations cost roughly **$0.01 each** with `gpt-4o-mini`.
+- The **Tampermonkey** browser extension (installed in step 5 below).
+
+### Step 1 &mdash; Clone the repo
 
 ```bash
-cd backend
-cp .env.example .env
-# edit .env: OPENAI_API_KEY=sk-your-real-key
-cd ..
+git clone https://github.com/t-kandasami/makeLinkedinReadableAgain.git
+cd makeLinkedinReadableAgain
 ```
 
-### 3. Start the backend
+### Step 2 &mdash; Get an OpenAI API key
 
-From the project root:
+1. Go to https://platform.openai.com/api-keys and sign in (creating an account requires adding a payment method).
+2. Click **Create new secret key**.
+3. Give it a name like `linkedin-translator-local` and click **Create**.
+4. **Copy the `sk-...` value &mdash; OpenAI shows it only once.** Lose it and you have to make a new one.
+5. **Recommended:** on the same dashboard, set a low monthly hard cap under **Usage limits** (e.g., $5) so a leak or runaway loop can't drain your account.
+
+### Step 3 &mdash; Add your key to the project
+
+From the repo root:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+(On Windows PowerShell: `Copy-Item backend\.env.example backend\.env`.)
+
+Open `backend/.env` in any text editor and replace the placeholder:
+
+```
+OPENAI_API_KEY=sk-paste-your-real-key-here
+```
+
+`backend/.env` is already in `.gitignore`, so the key never gets committed.
+
+### Step 4 &mdash; Start the backend
+
+From the repo root:
 
 ```bash
 docker compose up --build
 ```
 
-Backend boots at `http://localhost:8000`. Open that URL &mdash; you should see the showcase page.
+The first run takes ~1 minute (pip install). Subsequent runs are seconds. You'll know it's working when the terminal shows:
 
-The volume mount in `docker-compose.yml` plus uvicorn's `--reload` means edits to `backend/` reload instantly without rebuilding the image.
+```
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
 
-### 4. (Without Docker) Run uvicorn directly
+**Leave this terminal open.** Open another terminal/tab for everything below.
 
-If you want a faster dev loop and have Python 3.12+ installed:
+**Verify with the smoke tests:**
+
+```bash
+bash backend/test.sh
+```
+
+If you see `all tests passed` you're good. If a test fails, check the backend terminal for an error (most often: bad / missing OpenAI key).
+
+**Verify in the browser:** open http://localhost:8000 . You should see the showcase page with the live-demo widget. Paste a LinkedIn-style sentence, click **Translate**, and watch the meme card render. If that works, the backend is fully healthy.
+
+### Step 5 &mdash; Install Tampermonkey
+
+1. Install the extension from https://www.tampermonkey.net/ for your browser.
+2. **Chrome / Edge / Brave only:** open `chrome://extensions` (or `edge://extensions`, `brave://extensions`) and toggle **Developer mode** on (top-right corner). This is a Chrome Manifest V3 requirement — Tampermonkey can't inject userscripts without it. Firefox users skip this step.
+
+### Step 6 &mdash; Install the userscript
+
+1. In your file manager, double-click `userscript/linkedin-translator.user.js`. (Alternatively: drag the file into a browser tab, or `xdg-open` it on Linux, `open` on Mac.)
+2. Tampermonkey will detect the userscript metadata and show an install screen with the script's name, source, and `@match` rules.
+3. Click **Install**.
+4. Tampermonkey's dashboard (the extension icon → Dashboard) should now list **LinkedIn Translator: Savage Truth** with a green "enabled" toggle.
+
+### Step 7 &mdash; Use it on LinkedIn
+
+1. Visit https://www.linkedin.com (login optional &mdash; the script works on any public post).
+2. Find a post. Humblebrags, "thrilled to announce," and conference-energy posts give the best translations.
+3. **Highlight some text** with your cursor.
+4. A red **Translate** button appears just below the selection.
+5. Click it.
+6. A new window opens showing the side-by-side meme card:
+   - **Left (LinkedIn):** the original post, with cliché phrases underlined. Hover any underline for the plain-English meaning.
+   - **Right (Real Life):** category badge, the brutally honest translation, spice meter, tags, alternate readings, caption.
+
+That's it. Highlight more text, click Translate, get more translations. Each one costs about a US cent.
+
+---
+
+## Using the live demo (without the userscript)
+
+If you don't want to install Tampermonkey, or you want to translate a post that's not on LinkedIn, use the live demo widget:
+
+1. Make sure the backend is running (`docker compose up`).
+2. Open http://localhost:8000 (or, once deployed, `https://<owner>.github.io/<repo>/`).
+3. Paste any text into the textarea.
+4. Click **Translate**.
+5. The same meme card renders directly on the page.
+
+---
+
+## Running without Docker (faster dev loop)
+
+If you have Python 3.12+ installed and want to avoid Docker rebuilds while editing the backend:
 
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate    # Windows: .venv\Scripts\activate
+source .venv/bin/activate           # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-### 5. Install the userscript
+Same `backend/.env` is read automatically. Same `http://localhost:8000` URL. Code changes hot-reload instantly.
 
-1. Install [Tampermonkey](https://www.tampermonkey.net/).
-2. Open `userscript/linkedin-translator.user.js` in your browser. Tampermonkey will detect the metadata header and offer to install.
-3. Visit linkedin.com. Highlight any post. Click the floating **Translate** button.
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `docker compose up` says "Cannot connect to the Docker daemon" | Docker Desktop isn't running, or on Linux your user isn't in the `docker` group (`sudo usermod -aG docker $USER`, then log out and back in). |
+| Backend crashes with `OPENAI_API_KEY is not set` | Step 3 was skipped or `.env` still has `sk-replace-me`. |
+| Backend boots but `/translate` returns **502** with `openai unreachable` | Wrong key, expired key, no payment method, or rate-limited. Check the backend terminal for the exact OpenAI error. |
+| Userscript installed but no Translate button appears on linkedin.com | Tampermonkey toggle is off, OR Chrome's `Developer mode` is off (step 5), OR you're not on a `linkedin.com/*` URL, OR your selection is too short (under 2 characters). |
+| Popup window shows "Backend unreachable" | `docker compose up` died or isn't running. Check the terminal where you started it. |
+| Live demo widget shows "Backend unreachable at http://localhost:8000" | Same fix &mdash; backend isn't running. The live demo always calls `localhost:8000` even when loaded from GitHub Pages. |
+| Translation appears but no clichés are underlined | The highlighter call returned an empty array (rare). The translation itself is still valid. |
+| `bash backend/test.sh` says CORS preflight failed | The backend is running an older version. Rebuild: `docker compose up --build`. |
 
 ---
 
@@ -221,7 +315,7 @@ Five checks: healthz, translate happy path, highlights happy path, validation re
 
 ## Updating the project
 
-The website (`backend/static/index.html`) and this README must be updated whenever code changes. The changelog list at the bottom of the website is the living history &mdash; add an entry there for every meaningful change.
+The website ([`docs/index.html`](docs/index.html)) and this README must be updated whenever code changes. The changelog list at the bottom of the website is the living history &mdash; add an entry there for every meaningful change.
 
 ---
 
