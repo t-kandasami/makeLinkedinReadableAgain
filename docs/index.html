@@ -48,6 +48,10 @@
       <ul id="changelog-list">
         <li>
           <span class="date">2026-05-02</span>
+          <span class="entry">Added a 🔊 Speak button on the translation card. Uses the browser's Web Speech API (no audio assets, no API). Voice pitch and rate are <strong>spice-driven</strong>: spice 1 reads in a soft sympathetic voice (pitch 1.4, rate 0.85); spice 10 reads deep and rushed (pitch 0.4, rate 1.3). Click again while speaking to stop. Renders in both the popup window and the live demo.</span>
+        </li>
+        <li>
+          <span class="date">2026-05-02</span>
           <span class="entry">Userscript v0.1.4: replaced page-context <code>fetch()</code> with Tampermonkey's <code>GM_xmlhttpRequest</code>. linkedin.com's <code>connect-src</code> CSP blocks any page-script connection to localhost; <code>GM_xmlhttpRequest</code> runs in the extension's privileged process and bypasses page CSP. Added <code>@connect localhost</code> and <code>@grant GM_xmlhttpRequest</code> to the userscript header.</span>
         </li>
         <li>

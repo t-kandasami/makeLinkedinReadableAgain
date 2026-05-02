@@ -213,6 +213,32 @@ section h2 {
   line-height: 1.4;
 }
 
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px 5px 10px;
+  margin-top: 4px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--linkedin-blue);
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.speak-btn:hover { background: #eef3f8; }
+.speak-btn:active { background: #d3e3f3; }
+.speak-btn.speaking {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.speak-btn svg { display: block; }
+
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag {
   display: inline-block;
