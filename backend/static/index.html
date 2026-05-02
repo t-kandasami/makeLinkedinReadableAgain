@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Translator: Savage Truth</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>LinkedIn Translator: Savage Truth</h1>
+    <p class="tagline">An AI-powered comedy translator that reveals the hidden emotional truth behind corporate LinkedIn posts.</p>
+    <p class="subtitle">Singapore Stupid Hackathon 2026</p>
+  </header>
+
+  <main>
+    <section class="about">
+      <h2>What is this?</h2>
+      <p>Highlight any cringe LinkedIn post. A floating "Translate" button appears next to your selection. Click it. A new window opens showing the post's <em>actual</em> meaning &mdash; clichés underlined on the left, a Real Life Translation card on the right.</p>
+      <p>The real product is a Tampermonkey userscript that runs on linkedin.com. The widget below is a live demo so you can play with it without installing anything.</p>
+    </section>
+
+    <section class="demo">
+      <h2>Live Demo</h2>
+      <form class="demo-form" id="demo-form">
+        <label for="demo-input" class="sr-only">Paste a LinkedIn post</label>
+        <textarea id="demo-input" placeholder="Paste any LinkedIn post here. Try a humblebrag for best results."></textarea>
+        <button type="submit" id="demo-submit">Translate</button>
+      </form>
+      <div id="demo-output"></div>
+    </section>
+
+    <section class="install">
+      <h2>Install the userscript</h2>
+      <ol>
+        <li>Make sure the backend is running on <code>http://localhost:8000</code> (this page wouldn't load otherwise).</li>
+        <li>Install the <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Tampermonkey</a> browser extension.</li>
+        <li>Open <code>userscript/linkedin-translator.user.js</code> from the project repo &mdash; Tampermonkey will detect the metadata header and offer to install.</li>
+        <li>Visit <a href="https://www.linkedin.com" target="_blank" rel="noopener">linkedin.com</a>, highlight any post, click the floating Translate button.</li>
+      </ol>
+    </section>
+
+    <section class="changelog">
+      <h2>Changelog</h2>
+      <ul id="changelog-list">
+        <li>
+          <span class="date">2026-05-02</span>
+          <span class="entry">Initial build &mdash; FastAPI backend with <code>/translate</code> and <code>/highlights</code>, Tampermonkey userscript with floating selection button + popup window, live demo widget on this page, shared meme-card renderer.</span>
+        </li>
+      </ul>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">
+        <em>Update this list whenever code changes ship.</em>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Built for the Singapore Stupid Hackathon 2026 &middot; localhost only &middot; gpt-4o-mini
+  </footer>
+
+  <script src="/render.js"></script>
+  <script src="/demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+:root {
+  --linkedin-blue: #0a66c2;
+  --linkedin-blue-dark: #004182;
+  --bg: #f3f2ef;
+  --card-bg: #ffffff;
+  --text: #1d2226;
+  --text-muted: #56687a;
+  --border: #e0dfdc;
+  --accent: #d11149;
+  --accent-soft: #ffe8ef;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+body.popup-body {
+  padding: 24px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); border: 0;
+}
+
+a { color: var(--linkedin-blue); }
+
+/* ---------- Site chrome ---------- */
+.site-header {
+  background: linear-gradient(135deg, var(--linkedin-blue), var(--linkedin-blue-dark));
+  color: white;
+  padding: 48px 24px 40px;
+  text-align: center;
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: -0.5px;
+}
+.site-header .tagline {
+  margin: 10px auto 0;
+  max-width: 720px;
+  opacity: 0.9;
+  font-size: 16px;
+}
+.site-header .subtitle {
+  margin: 16px 0 0;
+  opacity: 0.75;
+  font-size: 13px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+section { margin-bottom: 56px; }
+section h2 {
+  font-size: 22px;
+  margin: 0 0 16px;
+  color: var(--linkedin-blue);
+  border-bottom: 2px solid var(--linkedin-blue);
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.about p {
+  color: var(--text);
+  max-width: 760px;
+  font-size: 16px;
+}
+
+/* ---------- Live demo ---------- */
+.demo-form textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 15px;
+  resize: vertical;
+  background: var(--card-bg);
+}
+.demo-form textarea:focus {
+  outline: none;
+  border-color: var(--linkedin-blue);
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.15);
+}
+.demo-form button {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background: var(--linkedin-blue);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.demo-form button:hover:not(:disabled) { background: var(--linkedin-blue-dark); }
+.demo-form button:disabled { opacity: 0.6; cursor: progress; }
+
+#demo-output { margin-top: 24px; }
+.demo-loading {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 16px;
+  text-align: center;
+}
+.error {
+  padding: 16px 20px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent);
+  line-height: 1.6;
+}
+
+/* ---------- Meme card (shared by site + popup) ---------- */
+.meme-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.meme-col .col-label {
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.meme-col.right .col-label { color: var(--accent); }
+.original-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 15px;
+}
+
+.cliche {
+  background: var(--accent-soft);
+  border-bottom: 2px dotted var(--accent);
+  padding: 0 2px;
+  border-radius: 2px;
+  cursor: help;
+}
+
+.translation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.category-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+.spice-meter {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+.spice-tick {
+  width: 8px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--border);
+}
+.spice-tick.on { background: var(--accent); }
+.spice-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 4px;
+  letter-spacing: 0.5px;
+}
+
+.translation-main {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #eef3f8;
+  color: var(--linkedin-blue);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.alts { margin-top: 4px; }
+.alts h4 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.alt {
+  margin: 4px 0;
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+}
+
+.card-footer {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.caption {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.disclaimer {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------- Install + Changelog ---------- */
+.install ol { padding-left: 22px; }
+.install li { margin-bottom: 8px; }
+.install code {
+  background: #eef3f8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.changelog ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.changelog li {
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.changelog .date {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.changelog .entry { flex: 1; }
+
+footer {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .meme-card { grid-template-columns: 1fr; }
+  .site-header h1 { font-size: 26px; }
+}
