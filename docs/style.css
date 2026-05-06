@@ -82,6 +82,63 @@ section h2 {
   font-size: 16px;
 }
 
+/* ---------- Team ---------- */
+.team-photo {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: block;
+  margin: 0 0 24px;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  max-width: 800px;
+}
+.team-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.team-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+}
+.team-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--linkedin-blue);
+  background: transparent;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.team-link:hover {
+  background: #eef3f8;
+  color: var(--linkedin-blue-dark);
+  border-color: var(--linkedin-blue);
+}
+.team-link svg { display: block; }
+
 /* ---------- Site nav ---------- */
 .site-nav {
   margin-top: 22px;
